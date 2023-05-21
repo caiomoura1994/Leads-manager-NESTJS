@@ -1,30 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { Lead } from '@prisma/client';
-import { faker } from '@faker-js/faker';
 
 import { LeadsService } from './leads.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { FindAllLeadsDto } from './dto/findall-lead.dto';
-
-
-function generateRandomLead(withId = true): Lead {
-  let fakerPayload = {
-    id: withId ? faker.number.int() : null,
-    name: faker.person.fullName(),
-    mail: faker.internet.email(),
-    phone: faker.phone.number(),
-    createdAt: faker.date.past(),
-    updatedAt: faker.date.recent(),
-    gclid: faker.string.alphanumeric(),
-    fbclid: faker.string.alphanumeric(),
-    utmSource: faker.lorem.word(),
-    utmCampaign: faker.lorem.word(),
-    utmMedium: faker.lorem.word(),
-    utmTerm: faker.lorem.word(),
-    utmContent: faker.lorem.word(),
-  };
-  return fakerPayload
-}
+import { generateMockLead } from '../utils/test-utils';
 
 describe('LeadsService', () => {
   let leadsService: LeadsService;
@@ -46,8 +25,8 @@ describe('LeadsService', () => {
 
   describe('create', () => {
     it('should create a new lead', async () => {
-      const createLeadInput = generateRandomLead();
-      const mockLead = generateRandomLead(true);
+      const createLeadInput = generateMockLead();
+      const mockLead = generateMockLead(true);
       jest.spyOn(prismaService.lead, 'create').mockResolvedValue(mockLead);
 
       const result = await leadsService.create(createLeadInput);
@@ -59,7 +38,7 @@ describe('LeadsService', () => {
 
   describe('findAll', () => {
     it('should return an array of leads', async () => {
-      const mockLeads = [generateRandomLead(true), generateRandomLead(true)];
+      const mockLeads = [generateMockLead(true), generateMockLead(true)];
       const params: FindAllLeadsDto = {}; // You can customize the params object if needed
 
       jest.spyOn(prismaService.lead, 'findMany').mockResolvedValue(mockLeads);
@@ -73,7 +52,7 @@ describe('LeadsService', () => {
 
   describe('findOne', () => {
     it('should return a lead by ID', async () => {
-      const mockLead = generateRandomLead(true);
+      const mockLead = generateMockLead(true);
       const leadId = 1;
 
       jest.spyOn(prismaService.lead, 'findUnique').mockResolvedValue(mockLead);
@@ -87,7 +66,7 @@ describe('LeadsService', () => {
 
   describe('update', () => {
     it('should update a lead by ID', async () => {
-      const mockLead = generateRandomLead(true);
+      const mockLead = generateMockLead(true);
       const leadId = 1;
       const updateLeadDto = { name: 'Updated Name' };
 
@@ -102,7 +81,7 @@ describe('LeadsService', () => {
 
   describe('remove', () => {
     it('should delete a lead by ID', async () => {
-      const mockLead = generateRandomLead(true);
+      const mockLead = generateMockLead(true);
       const leadId = 1;
 
       jest.spyOn(prismaService.lead, 'delete').mockResolvedValue(mockLead);
